@@ -1,0 +1,121 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap'); /* import font */
+
+*{
+    margin: 0;
+    padding: 0;
+}
+#name{
+    color: #074173;
+    font-size: 30px; /* Default font size */
+    border-bottom: 3px ridge #074173;
+    max-width: fit-content;
+    text-shadow: 2px 2px 2px #439feb;
+    
+}
+
+
+    @media (min-width: 600px) {
+        #name {
+            font-size: 40px; /* Font size for screens wider than 600px */
+            max-width: fit-content;
+        }
+    }
+
+    @media (min-width: 900px) {
+        #name {
+            font-size: 50px; /* Font size for screens wider than 900px */
+            max-width: fit-content;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        #name {
+            font-size: 70px; /* Font size for screens wider than 1200px */
+            max-width: fit-content;
+        }
+    }   
+body{
+    background-image: url(/assets/login.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+}
+.container{
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+}
+#heading{
+    margin-left: 100px;
+    margin-top: 50px;
+    
+}
+.login{
+    height: 400px;
+    width:350px;
+    text-align: center;
+    border: 1px solid beige;
+    color: 074173;
+    margin-left: 150px;
+    margin-top: 80px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px beige;
+}
+form{
+    display: block;
+    box-sizing: border-box;
+    padding: 40px;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    display: flex;
+    gap: 20px;
+
+}
+#login{
+    font-weight:500px;
+    font-size: 34px;
+    text-shadow: 1px 1px 1px #18d1d1;
+    margin-bottom: 60px;
+}
+input{
+    background: white;
+    height:40px;
+    line-height: 40px;
+    border:none;
+    border-radius: 20px;
+    padding: 0px 40px;
+    margin-bottom: 20px;
+    color : #074173;
+    outline: none;
+}
+input:hover{
+    box-shadow:2px 2px 15px #1f97fa;
+    background-color: white;
+    border: white;
+    transition: 0.2s ;
+}
+input::placeholder{
+    color:black;
+    text-shadow:0px 0px 2px #18d1d1;
+    opacity: 0.5;
+}
+
+button{
+    background:#1f97fa;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 40px;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: 600px;
+
+}
+button:hover{
+    background-color: #2067a4;
+    text-shadow:0px 0px 2px #18d1d1;
+    transition: 0.3s;
+}
