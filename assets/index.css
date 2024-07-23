@@ -18,8 +18,8 @@ body {
 }
 
 header {
-    border: 5px solid #0D0DFF; /* Header border color */
-    background-color: #0D0DFF; /* Header background color */
+    border: 5px solid #3FA2F6; /* Header border color */
+    background-color: #3FA2F6; /* Header background color */
     color: white; /* Text color in header */
     text-align: center;
     padding: 2%;
@@ -50,19 +50,25 @@ button {
     outline: none;
     height: 10vw; /* Responsive height */
     width: 20vw;  /* Responsive width */
-    max-height: 80px; /* Limit max size */
-    max-width: 160px; /* Limit max size */
-    background-color: #0D0DFF; /* Button background color */
+    max-height: 100px; /* Limit max size */
+    max-width: 200px; /* Limit max size */
+    background-color: #3FA2F6; /* Button background color */
     color: white; /* Button text color */
     font-size: 2vw; /* Responsive font size */
     cursor: pointer;
-    margin: 5px; /* Add margin for spacing */
+    margin: 10px; /* Add margin for spacing */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Add transitions */
+}
+
+button:hover {
+    background-color: #2a82cc; /* Change background color on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
 }
 
 footer {
     text-align: center;
     padding: 2%;
-    background-color: #0D0DFF; /* Footer background color */
+    background-color: #3FA2F6; /* Footer background color */
     color: white; /* Footer text color */
 }
 
