@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgb(72, 153, 206);
+    color: #343a40;
+}
+
+header {
+    text-align: center;
+    margin-top: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+    color: #f8f9fa;
+}
+
+section {
+    margin: 20px 0;
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group-item .task-title, .list-group-item .todo-title, .list-group-item .note-title, .list-group-item .habit-title, .list-group-item .team-task-title {
+    flex-grow: 1;
+}
+
+.task-actions, .todo-actions, .note-actions, .habit-actions, .team-task-actions {
+    margin-left: 20px;
+}
+
+.team{
+    border: #343a40;
+}

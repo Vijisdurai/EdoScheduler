@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List - Edo Scheduler</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>To-Do List</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tasks.html">Tasks</a></li>
+                <li><a href="notes.html">Notes</a></li>
+                <li><a href="teams.html">Teams</a></li>
+                <li><a href="habits.html">Habits</a></li>
+                <li><a href="/calender/calendar.html">Calendar</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="todo-input">
+            <h2>Add New To-Do Item</h2>
+            <form id="todo-form">
+                <div class="form-group">
+                    <label for="todo-title">Title</label>
+                    <input type="text" id="todo-title" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add To-Do Item</button>
+            </form>
+        </section>
+        <section id="todos">
+            <h2>To-Do List</h2>
+            <ul id="todo-list" class="list-group"></ul>
+        </section>
+    </main>
+    <script src="/scripts.js"></script>
+</body>
+</html>

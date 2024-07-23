@@ -1,0 +1,79 @@
+/* Base styles */
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    background-color: #f7f7f7; /* Background color */
+    color: #333; /* Default text color */
+    font-family: 'Arial', sans-serif; /* Font style */
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    border: 5px solid #0D0DFF; /* Header border color */
+    background-color: #0D0DFF; /* Header background color */
+    color: white; /* Text color in header */
+    text-align: center;
+    padding: 2%;
+    max-width: 100%;
+}
+
+main {
+    flex: 1; /* Allows the main content to take up remaining space */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2%;
+}
+
+div {
+    display: flex;
+    flex-direction: row; /* Always keep buttons in a row */
+    flex-wrap: wrap; /* Allow buttons to wrap onto the next line if needed */
+    justify-content: center; /* Center items horizontally */
+    align-items: center;
+    padding: 2%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+button {
+    border: none;
+    outline: none;
+    height: 10vw; /* Responsive height */
+    width: 20vw;  /* Responsive width */
+    max-height: 80px; /* Limit max size */
+    max-width: 160px; /* Limit max size */
+    background-color: #0D0DFF; /* Button background color */
+    color: white; /* Button text color */
+    font-size: 2vw; /* Responsive font size */
+    cursor: pointer;
+    margin: 5px; /* Add margin for spacing */
+}
+
+footer {
+    text-align: center;
+    padding: 2%;
+    background-color: #0D0DFF; /* Footer background color */
+    color: white; /* Footer text color */
+}
+
+/* Responsive design for small screens */
+@media (max-width: 900px) {
+    div {
+        padding: 5%; /* Adjust padding if needed */
+    }
+
+    button {
+        width: 25vw; /* Adjust width to fit better on smaller screens */
+        margin: 5px; /* Maintain margin for spacing */
+    }
+}
