@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #0D0DFF;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .habits {
+            list-style: none;
+            padding: 0;
+        }
+        .habits li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #e0e0e0;
+            border-radius: 4px;
+        }
+        .habits li.completed {
+            text-decoration: line-through;
+            background: #d3ffd3;
+        }
+        .habit-title {
+            font-size: 1.1em;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 12px;
+            border: none;
+            background-color: #0D0DFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button.complete {
+            background-color: #28a745;
+        }
+        button.delete {
+            background-color: #dc3545;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        .filter-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .filter-group select {
+            width: auto;
+        }
+        .analytics {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Habit Tracker</h1>
+        <div class="form-group">
+            <label for="habit-title">Habit Title</label>
+            <input type="text" id="habit-title" placeholder="Enter habit title">
+        </div>
+        <div class="form-group">
+            <label for="habit-category">Category</label>
+            <input type="text" id="habit-category" placeholder="Enter habit category">
+        </div>
+        <div class="form-group">
+            <label for="habit-frequency">Frequency</label>
+            <select id="habit-frequency">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+        </div>
+        <button onclick="addHabit()">Add Habit</button>
+        
+        <div class="filter-group">
+            <select id="filter-category" onchange="filterHabits()">
+                <option value="all">All Categories</option>
+            </select>
+            <select id="view-mode" onchange="renderHabits()">
+                <option value="list">List View</option>
+                <option value="calendar">Calendar View</option>
+            </select>
+        </div>
+        
+        <ul class="habits" id="habits-list"></ul>
+        
+        <div class="analytics">
+            <p id="completion-rate">Completion Rate: 0%</p>
+        </div>
+    </div>
+
+    <script>
+        function addHabit() {
+            const title = document.getElementById('habit-title').value;
+            const category = document.getElementById('habit-category').value;
+            const frequency = document.getElementById('habit-frequency').value;
+            if (title === '' || category === '') {
+                alert('Please enter a habit title and category');
+                return;
+            }
+
+            const habit = {
+                title,
+                category,
+                frequency,
+                completed: false
+            };
+
+            const habits = JSON.parse(localStorage.getItem('habits')) || [];
+            habits.push(habit);
+            localStorage.setItem('habits', JSON.stringify(habits));
+
+            document.getElementById('habit-title').value = '';
+            document.getElementById('habit-category').value = '';
+            updateCategoryFilter();
+            renderHabits();
+        }
+
+        function renderHabits() {
+            const habitsList = document.getElementById('habits-list');
+            habitsList.innerHTML = '';
+
+            const viewMode = document.getElementById('view-mode').value;
+            const filterCategory = document.getElementById('filter-category').value;
+
+            const habits = JSON.parse(localStorage.getItem('habits')) || [];
+            const filteredHabits = filterCategory === 'all' ? habits : habits.filter(habit => habit.category === filterCategory);
+
+            filteredHabits.forEach((habit, index) => {
+                const habitItem = document.createElement('li');
+                habitItem.className = habit.completed ? 'completed' : '';
+                habitItem.innerHTML = `
+                    <span class="habit-title">${habit.title} (${habit.frequency})</span>
+                    <div class="actions">
+                        <button class="complete" onclick="toggleComplete(${index})">Complete</button>
+                        <button class="delete" onclick="deleteHabit(${index})">Delete</button>
+                    </div>
+                `;
+                habitsList.appendChild(habitItem);
+            });
+
+            updateCompletionRate();
+        }
+
+        function toggleComplete(index) {
+            const habits = JSON.parse(localStorage.getItem('habits')) || [];
+            habits[index].completed = !habits[index].completed;
+            localStorage.setItem('habits', JSON.stringify(habits));
+            renderHabits();
+        }
+
+        function deleteHabit(index) {
+            const habits = JSON.parse(localStorage.getItem('habits')) || [];
+            habits.splice(index, 1);
+            localStorage.setItem('habits', JSON.stringify(habits));
+            renderHabits();
+        }
+
+        function updateCategoryFilter() {
+            const filterCategory = document.getElementById('filter-category');
+            const habits = JSON.parse(localStorage.getItem('habits')) || [];
+
+            const categories = [...new Set(habits.map(habit => habit.category))];
+            filterCategory.innerHTML = '<option value="all">All Categories</option>';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                filterCategory.appendChild(option);
+            });
+        }
+
+        function filterHabits() {
+            renderHabits();
+        }
+
+        function updateCompletionRate() {
+            const habits = JSON.parse(localStorage.getItem('habits')) || [];
+            const completedHabits = habits.filter(habit => habit.completed).length;
+            const completionRate = habits.length > 0 ? (completedHabits / habits.length) * 100 : 0;
+            document.getElementById('completion-rate').textContent = `Completion Rate: ${completionRate.toFixed(2)}%`;
+        }
+
+        window.onload = () => {
+            updateCategoryFilter();
+            renderHabits();
+        };
+    </script>
+</body>
+</html>

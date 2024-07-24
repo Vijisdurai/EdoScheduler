@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        
+        header {
+            background: #1f97fa;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navbar a {
+            float: left;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+            color: black;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .day-schedule {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #1f97fa;
+            border-bottom: 2px solid #1f97fa;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-spacing: 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1f97fa;
+            color: white;
+        }
+
+        td {
+            background-color: #fafafa;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        tbody tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        tbody tr:hover {
+            background-color: #e9f5ff;
+        }
+
+        .completed td {
+            text-decoration: line-through;
+            background-color: #d3ffd3;
+        }
+
+        @media (max-width: 600px) {
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            th, td {
+                display: block;
+                text-align: right;
+            }
+
+            th {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                text-transform: uppercase;
+                display: block;
+            }
+        }
+
+        .task-inputs, .edit-mode {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .task-inputs input, .task-inputs button, .edit-mode input, .edit-mode button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        .task-inputs input:focus, .edit-mode input:focus {
+            border-color: #1f97fa;
+            outline: none;
+        }
+
+        .task-inputs button, .edit-mode button {
+            background-color: #1f97fa;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .task-inputs button:hover, .edit-mode button:hover {
+            background-color: #1794d4;
+            transform: scale(1.05);
+        }
+
+        .status-select {
+            display: inline-block;
+            width: 100%;
+        }
+
+        .action-buttons button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .edit-button {
+            background-color: #0F67B1;
+            color: white;
+        }
+
+        .edit-button:hover {
+            background-color:#0F67B1;
+        }
+
+        .delete-button {
+            background-color: #3FA2F6;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #3FA2F6;
+        }
+
+        .save-button {
+            background-color: #5bc0de;
+            color: white;
+        }
+
+        .save-button:hover {
+            background-color: #31b0d5;
+        }
+
+        .edit-mode {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Teams</h1>
+    </header>
+    <div class="navbar">
+        <a href="/index.html" class="active">Home</a>
+        <a href="/tasks.html">Tasks</a>
+        <a href="/calender/calendar.html">Calendar</a>
+        <a href="/notes.html">Notes</a>
+        <a href="/habits.html">Habit Tracker</a>
+        <a href="/todo.html">To-Do</a>
+    </div>
+    <div class="container">
+        <div class="task-inputs" id="taskInputs">
+            <input type="text" id="team" placeholder="Enter team name">
+            <input type="date" id="date" class="date-picker" placeholder="Select date">
+            <input type="time" id="time" class="time-picker" placeholder="Select time">
+            <input type="text" id="activity" placeholder="Enter activity">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        <div class="edit-mode" id="editMode" style="display: none;">
+            <input type="text" id="editTeam" placeholder="Enter team name">
+            <input type="date" id="editDate" class="date-picker" placeholder="Select date">
+            <input type="time" id="editTime" class="time-picker" placeholder="Select time">
+            <input type="text" id="editActivity" placeholder="Enter activity">
+            <button class="save-button" onclick="saveTask()">Save Changes</button>
+        </div>
+        <div class="day-schedule">
+            <h2>Teams</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team Name</th>
+                        <th>Date and Time</th>
+                        <th>Task</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule">
+                    <!-- Tasks will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        let currentEditRow = null;
+
+        function addTask() {
+            const team = document.getElementById("team").value;
+            const date = document.getElementById("date").value;
+            const time = document.getElementById("time").value;
+            const activity = document.getElementById("activity").value;
+
+            if (team && date && time && activity) {
+                const table = document.getElementById("schedule");
+                const row = table.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
+                const cell5 = row.insertCell(4);
+
+                cell1.setAttribute("data-label", "Team Name");
+                cell1.innerHTML = team;
+
+                cell2.setAttribute("data-label", "Date and Time");
+                cell2.innerHTML = `${date} ${time}`;
+
+                cell3.setAttribute("data-label", "Task");
+                cell3.innerHTML = activity;
+
+                cell4.setAttribute("data-label", "Status");
+                cell4.innerHTML = `
+                    <select class="status-select" onchange="updateStatus(this)">
+                        <option value="Yet to Start">Yet to Start</option>
+                        <option value="On Progress">On Progress</option>
+                        <option value="25%">25%</option>
+                        <option value="50%">50%</option>
+                        <option value="75%">75%</option>
+                        <option value="90%">90%</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                `;
+
+                cell5.setAttribute("data-label", "Action");
+                cell5.innerHTML = `
+                    <button class="edit-button" onclick="editTask(this)">Edit</button>
+                    <button class="delete-button" onclick="deleteTask(this)">Delete</button>
+                `;
+
+                makeSortable();
+            } else {
+                alert("Please enter all fields.");
+            }
+        }
+
+        function updateStatus(select) {
+            const row = select.parentElement.parentElement;
+            const status = select.value;
+            if (status === "Completed") {
+                row.classList.add("completed");
+            } else {
+                row.classList.remove("completed");
+            }
+        }
+
+        function editTask(button) {
+            const row = button.parentElement.parentElement;
+            const cells = row.getElementsByTagName("td");
+
+            document.getElementById("editTeam").value = cells[0].innerText;
+            const [date, time] = cells[1].innerText.split(' ');
+            document.getElementById("editDate").value = date;
+            document.getElementById("editTime").value = time;
+            document.getElementById("editActivity").value = cells[2].innerText;
+
+            document.getElementById("taskInputs").style.display = "none";
+            document.getElementById("editMode").style.display = "flex";
+            currentEditRow = row;
+        }
+
+        function saveTask() {
+            const team = document.getElementById("editTeam").value;
+            const date = document.getElementById("editDate").value;
+            const time = document.getElementById("editTime").value;
+            const activity = document.getElementById("editActivity").value;
+
+            if (team && date && time && activity) {
+                currentEditRow.cells[0].innerText = team;
+                currentEditRow.cells[1].innerText = `${date} ${time}`;
+                currentEditRow.cells[2].innerText = activity;
+
+                document.getElementById("editMode").style.display = "none";
+                document.getElementById("taskInputs").style.display = "flex";
+                currentEditRow = null;
+            } else {
+                alert("Please enter all fields.");
+            }
+        }
+
+        function deleteTask(button) {
+            const row = button.parentElement.parentElement;
+            row.parentNode.removeChild(row);
+        }
+
+        function makeSortable() {
+            $("#schedule").sortable({
+                items: "tr",
+                cursor: "move",
+                opacity: 0.6,
+                update: function() {
+                    // Order has been updated
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            makeSortable();
+        });
+    </script>
+</body>
+</html>

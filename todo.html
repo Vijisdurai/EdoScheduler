@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        
+        header {
+            background: #3FA2F6;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .day-schedule {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #3FA2F6;
+            border-bottom: 2px solid #3FA2F6;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3FA2F6;
+            color: white;
+        }
+
+        td {
+            background-color: #fafafa;
+            cursor: move;
+        }
+
+        tbody tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        .completed td {
+            text-decoration: line-through;
+            background-color: #d3ffd3;
+        }
+
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            th {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 5px;
+            }
+
+            td {
+                border: none;
+                position: relative;
+            }
+        }
+
+        .task-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .task-inputs input, .task-inputs select, .task-inputs button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .task-inputs button {
+            background-color: #3FA2F6;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .task-inputs button:hover {
+            background-color: #2e91d6;
+        }
+
+        .edit-button, .delete-button {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>To-Do List</h1>
+    </header>
+    <div class="navbar">
+        <a href="/index.html">Home</a>
+        <a href="/tasks.html">Tasks</a>
+        <a href="/notes.html">Notes</a>
+        <a href="/calender/calendar.html">Calendar</a>
+        <a href="/teams.html">Team works</a>
+    </div>
+    <div class="container">
+        <div class="task-inputs">
+            <input type="text" id="task" placeholder="Enter task">
+            <select id="priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        <div class="day-schedule">
+            <h2>To-Do List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Priority</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="todo-list">
+                    <!-- Tasks will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTasks();
+        });
+
+        function addTask() {
+            var task = document.getElementById("task").value;
+            var priority = document.getElementById("priority").value;
+
+            if (task) {
+                var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                tasks.push({ task: task, priority: priority, completed: false });
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                updateTaskList();
+                document.getElementById("task").value = ''; // Clear input field
+            } else {
+                alert("Please enter a task.");
+            }
+        }
+
+        function editTask(index) {
+            var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            var task = tasks[index];
+
+            var newTask = prompt("Edit Task:", task.task);
+            var newPriority = prompt("Edit Priority (High, Medium, Low):", task.priority);
+
+            if (newTask && newPriority) {
+                tasks[index] = { ...task, task: newTask, priority: newPriority };
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                updateTaskList();
+            }
+        }
+
+        function deleteTask(index) {
+            var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            updateTaskList();
+        }
+
+        function toggleComplete(checkbox, index) {
+            var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks[index].completed = checkbox.checked;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            updateTaskList();
+        }
+
+        function updateTaskList() {
+            var tableBody = document.getElementById("todo-list");
+            tableBody.innerHTML = '';
+            
+            var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            
+            // Sort tasks by priority
+            tasks.sort(function(a, b) {
+                const priorityOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+                return priorityOrder[a.priority] - priorityOrder[b.priority];
+            });
+
+            tasks.forEach(function(task, index) {
+                var row = tableBody.insertRow();
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                
+                cell1.innerHTML = task.task;
+                cell2.innerHTML = task.priority;
+                cell3.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleComplete(this, ${index})">
+                    <i class="fas fa-edit edit-button" onclick="editTask(${index})"></i>
+                    <i class="fas fa-trash delete-button" onclick="deleteTask(${index})"></i>
+                `;
+                
+                if (task.completed) {
+                    row.classList.add("completed");
+                    row.parentElement.appendChild(row);
+                }
+            });
+
+            makeSortable();
+        }
+
+        function makeSortable() {
+            $("#todo-list").sortable({
+                items: "tr",
+                cursor: "move",
+                opacity: 0.6,
+                update: function() {
+                    // Order has been updated
+                }
+            });
+        }
+
+        function loadTasks() {
+            updateTaskList();
+        }
+    </script>
+</body>
+</html>

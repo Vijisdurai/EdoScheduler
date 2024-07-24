@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f7f7f7;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: #3FA2F6;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            position: sticky;
+            top: 60px;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .container {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .note-inputs {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .note-inputs input, .note-inputs button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .note-inputs input {
+            border: 1px solid #ddd;
+            width: 300px;
+        }
+
+        .note-inputs button {
+            background-color: #3FA2F6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .note-inputs button:hover {
+            background-color: #2e91d6;
+            transform: scale(1.05);
+        }
+
+        .functional-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .functional-bar button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .functional-bar button:hover {
+            color: #3FA2F6;
+            transform: scale(1.1);
+        }
+
+        .note-editor {
+            border: 1px solid #ddd;
+            background-color: white;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+            min-height: 200px;
+            overflow-y: auto;
+        }
+
+        .note-editor:focus {
+            border-color: #3FA2F6;
+        }
+
+        .note-details {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .character-count {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .note-list {
+            width: 100%;
+            max-width: 1500px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .note-list ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .note-list li {
+            border: 1px solid #ddd;
+            background-color: white;
+            padding: 15px;
+            margin: 0;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px #3FA2F6;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .note-list li:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px #3FA2F6;
+        }
+
+        .note-list img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .note-list .delete-button, .note-list .edit-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: red;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+        }
+
+        .note-list .edit-button {
+            left: 10px;
+            color: green;
+        }
+
+        .note-list .delete-button {
+            right: 10px;
+        }
+
+        ul {
+            padding-left: 0;
+        }
+
+        ul li {
+            list-style-type: none;
+            position: relative;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .note-inputs input, .note-inputs button {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Notes</h1>
+    </header>
+    <div class="navbar">
+        <a href="/index.html">Home</a>
+        <a href="/tasks.html">Tasks</a>
+        <a href="/calender/calendar.html">Calendar</a>
+        <a href="/todo.html">To-Do</a>
+        <a href="/habits.html">Habits Tracker</a>
+        <a href="/teams.html">Team</a>
+    </div>
+    <div class="container">
+        <div class="note-inputs">
+            <input type="text" id="noteTitle" placeholder="Enter note title">
+            <button onclick="addNote()">Add Note</button>
+        </div>
+        <div class="functional-bar">
+            <button onclick="document.execCommand('bold', false, '')"><i class="fas fa-bold"></i></button>
+            <button onclick="document.execCommand('insertUnorderedList', false, '')"><i class="fas fa-list-ul"></i></button>
+            <button onclick="document.execCommand('insertOrderedList', false, '')"><i class="fas fa-list-ol"></i></button>
+            <button onclick="document.execCommand('justifyLeft', false, '')"><i class="fas fa-align-left"></i></button>
+            <button onclick="document.execCommand('justifyCenter', false, '')"><i class="fas fa-align-center"></i></button>
+            <button onclick="document.execCommand('justifyRight', false, '')"><i class="fas fa-align-right"></i></button>
+            <input type="file" id="imageInput" style="display:none;" onchange="insertImage(event)">
+            <button onclick="document.getElementById('imageInput').click()"><i class="fas fa-image"></i></button>
+        </div>
+        <div class="note-editor" contenteditable="true" id="noteContent" oninput="updateCharacterCount()"></div>
+        <div class="note-details">
+            <span id="noteDate"></span>
+            <span class="character-count">Characters: <span id="charCount">0</span></span>
+        </div>
+        <div class="note-list">
+            <h2>Notes</h2>
+            <ul id="notesList">
+                <!-- Notes will be dynamically added here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let editIndex = -1;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNotesList();
+        });
+
+        function addNote() {
+            const title = document.getElementById("noteTitle").value;
+            const content = document.getElementById("noteContent").innerHTML;
+            const date = new Date().toLocaleString();
+
+            if (title && content) {
+                let notes = JSON.parse(localStorage.getItem('notes')) || [];
+                if (editIndex === -1) {
+                    notes.push({ title: title, content: content, date: date });
+                } else {
+                    notes[editIndex] = { title: title, content: content, date: date };
+                    editIndex = -1;
+                }
+                localStorage.setItem('notes', JSON.stringify(notes));
+                document.getElementById("noteTitle").value = ''; 
+                document.getElementById("noteContent").innerHTML = '';
+                updateNotesList();
+            } else {
+                alert("Please enter a note title and content.");
+            }
+        }
+
+        function updateNotesList() {
+            const notesList = document.getElementById("notesList");
+            notesList.innerHTML = '';
+
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+            notes.forEach((note, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="note-content">
+                        <strong>${note.title}</strong>
+                        <div>${note.content}</div>
+                    </div>
+                    <button class="edit-button" onclick="editNoteContent(${index})"><i class="fas fa-edit"></i></button>
+                    <button class="delete-button" onclick="deleteNote(${index})"><i class="fas fa-trash"></i></button>
+                `;
+                li.onclick = () => enlargeNoteContent(note);
+                notesList.appendChild(li);
+            });
+        }
+
+        function updateCharacterCount() {
+            const content = document.getElementById("noteContent").innerText;
+            document.getElementById("charCount").textContent = content.length;
+        }
+
+        function insertImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.execCommand('insertHTML', false, `<img src="${e.target.result}" alt="Image">`);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deleteNote(index) {
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            notes.splice(index, 1);
+            localStorage.setItem('notes', JSON.stringify(notes));
+            updateNotesList();
+        }
+
+        function editNoteContent(index) {
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            const note = notes[index];
+            document.getElementById("noteTitle").value = note.title;
+            document.getElementById("noteContent").innerHTML = note.content;
+            editIndex = index;
+        }
+
+        function enlargeNoteContent(note) {
+            const noteContent = `
+                <h2>${note.title}</h2>
+                <p>${note.content}</p>
+                <p><em>${note.date}</em></p>
+            `;
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.backgroundColor = 'white';
+            modal.style.padding = '20px';
+            modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            modal.style.zIndex = '10000';
+            modal.innerHTML = `
+                <div>${noteContent}</div>
+                <button onclick="document.body.removeChild(this.parentElement)">Close</button>
+            `;
+            document.body.appendChild(modal);
+        }
+    </script>
+</body>
+</html>

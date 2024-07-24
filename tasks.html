@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        header {
+            background: #3FA2F6;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .task-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .task-inputs input, .task-inputs select, .task-inputs button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .task-inputs button {
+            background-color: #3FA2F6;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .task-inputs button:hover {
+            background-color: #2e91d6;
+        }
+
+        .menu {
+            margin-bottom: 20px;
+        }
+
+        .menu button {
+            background-color: #3FA2F6;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .menu button:hover {
+            background-color: #2e91d6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3FA2F6;
+            color: white;
+        }
+
+        td {
+            background-color: #fafafa;
+        }
+
+        tbody tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        .completed td {
+            text-decoration: line-through;
+            background-color: #d3ffd3;
+        }
+
+        .due-today {
+            background-color: #fdd;
+        }
+
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            th {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 5px;
+            }
+
+            td {
+                border: none;
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Task Manager</h1>
+    </header>
+    <div class="navbar">
+        <a href="/index.html">Home</a>
+        <a href="/todo.html">To-Do</a>
+        <a href="/calender/calendar.html">Calendar</a>
+        <a href="/notes.html">Notes</a>
+        <a href="/teams.html">Team works</a>
+        <a href="/habits.html">Habits Tracker</a>
+    </div>
+    <div class="container">
+        <div class="menu">
+            <button onclick="showCategory('all')">All Tasks</button>
+            <button onclick="showCategory('pending')">Pending Tasks</button>
+            <button onclick="showCategory('completed')">Completed Tasks</button>
+            <button onclick="showCategory('today')">Today Due</button>
+        </div>
+        <div class="task-inputs">
+            <input type="text" id="task" placeholder="Enter task">
+            <input type="datetime-local" id="dueDate">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        <div>
+            <h2>Task List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Due Date</th>
+                        <th>Completed</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="todo-list">
+                    <!-- Tasks will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTasks();
+            showCategory('all');
+        });
+        
+        function initializeTasks() {
+            // Check if tasks are already present in local storage
+            let tasks = JSON.parse(localStorage.getItem('tasks'));
+            if (!tasks) {
+                // Initialize with an empty array if no tasks exist
+                localStorage.setItem('tasks', JSON.stringify([]));
+            }
+        }
+        
+        function addTask() {
+            var task = document.getElementById("task").value;
+            var dueDate = document.getElementById("dueDate").value;
+        
+            if (task && dueDate) {
+                var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                // Remove any undefined tasks before adding new ones
+                tasks = tasks.filter(item => item !== undefined && item.task);
+                tasks.push({ task: task, dueDate: dueDate, completed: false });
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                document.getElementById("task").value = ''; 
+                document.getElementById("dueDate").value = ''; 
+                showCategory('all');
+            } else {
+                alert("Please enter a task and due date.");
+            }
+        }
+        
+        function toggleComplete(checkbox) {
+            var row = checkbox.parentElement.parentElement;
+            var taskText = row.cells[0].innerText;
+            var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            
+            tasks.forEach(function(item) {
+                if (item.task === taskText) {
+                    item.completed = checkbox.checked;
+                }
+            });
+        
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            showCategory('all');
+        }
+        
+        function deleteTask(button) {
+            var row = button.parentElement.parentElement;
+            var taskText = row.cells[0].innerText;
+            var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        
+            tasks = tasks.filter(item => item.task !== taskText);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            showCategory('all');
+        }
+        
+        function showCategory(category) {
+            var tableBody = document.getElementById("todo-list");
+            tableBody.innerHTML = '';
+        
+            var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks = tasks.filter(item => item !== undefined && item.task); // Remove undefined tasks
+            var now = new Date();
+            var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            var todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
+        
+            tasks = tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+        
+            tasks.forEach(function(task) {
+                if (category === 'all' || 
+                    (category === 'pending' && !task.completed) || 
+                    (category === 'completed' && task.completed) || 
+                    (category === 'today' && new Date(task.dueDate) >= todayStart && new Date(task.dueDate) < todayEnd)) {
+                    
+                    var row = tableBody.insertRow();
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    var cell4 = row.insertCell(3);
+        
+                    cell1.innerHTML = task.task;
+                    cell2.innerHTML = new Date(task.dueDate).toLocaleString();
+                    cell3.innerHTML = '<input type="checkbox" ' + (task.completed ? 'checked' : '') + ' onchange="toggleComplete(this)">';
+                    cell4.innerHTML = '<button onclick="deleteTask(this)">Delete</button>';
+        
+                    if (task.completed) {
+                        row.classList.add("completed");
+                    }
+        
+                    if (category === 'today' && new Date(task.dueDate).toDateString() === todayStart.toDateString()) {
+                        row.classList.add("due-today");
+                    }
+                }
+            });
+        }
+        
+    </script>
+</body>
+</html>
