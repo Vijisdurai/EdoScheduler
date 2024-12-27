@@ -35,10 +35,23 @@ The Edo Scheduler addresses the need for a unified task management platform. By 
 8. **FontAwesome:** Enhancing the UI with intuitive icons.
 
 ## Implementation Details
+- **Home Page:**
+![image](https://github.com/user-attachments/assets/54870776-3539-4d05-a2d5-1ee356870696)
+
 - **Tasks and To-Do List:** Forms and lists implemented using HTML and CSS, with JavaScript handling task management and updates.
+  ![image](https://github.com/user-attachments/assets/20c3265d-eb2e-4267-b698-d7805faef80c)
+  
 - **Notes:** Editable text areas linked to tasks.
+![image](https://github.com/user-attachments/assets/cb23a082-e433-4811-aaa9-33893e2deaaa)
+
 - **Habit Tracker:** Checkboxes or progress bars to track daily goals.
+![image](https://github.com/user-attachments/assets/741bc8fb-ffb5-4557-a80e-8f08fa70d624)
+
 - **Calendar View:** Integrated FullCalendar plugin displays tasks and notes with accurate scheduling.
+  ![image](https://github.com/user-attachments/assets/a6bef0b6-bce6-498b-a76b-091d45e0bbd8)
+
+
+
 
 ## Challenges and Solutions
 1. **Challenge:** Managing task dependencies and team assignments.
